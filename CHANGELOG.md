@@ -1,10 +1,8 @@
 # CHANGELOG
 
-## RebornOS ukui Skel `v1.1.1`
+## RebornOS UKUI Skel `v1.1.1`
 
 ### For Users
-
-- Fix ukui Icons.
 
 ### For Developers
 
