@@ -1,0 +1,57 @@
+# Maintainers:
+# 1. shivanandvp <shivanandvp@rebornos.org, pvshvp.oss@gmail.com>
+
+pkgname=rebornos-ukui-skel-local
+pkgver=1.1.1
+pkgrel=1
+
+arch=(any)
+pkgdesc='Skeleton for /home, used for configuring RebornOS UKUI'
+url='https://github.com/RebornOS-Team/rebornos-ukui-skel'
+license=('GPL3')
+depends=()
+optdepends=()
+provides=('skel')
+conflicts=('rebornos-ukui-skel' 'rebornos-ukui-skel-git')
+makedepends=('dconf') 
+
+source=()
+
+pkgver() {        
+    PROJECT_DIRECTORY="$(dirname -- "$(dirname -- "$(dirname -- "$(pwd)")")")"     
+
+    ( cd "$PROJECT_DIRECTORY" 
+        set -o pipefail
+        git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+        printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+    )
+}
+
+build() {     
+    PROJECT_DIRECTORY="$(dirname -- "$(dirname -- "$(dirname -- "$(pwd)")")")"
+    SCRIPT_DIRECTORY="$PROJECT_DIRECTORY/scripts"
+    SOURCE_DIRECTORY="$PROJECT_DIRECTORY/src"
+    RESOURCE_DIRECTORY="$SOURCE_DIRECTORY/rootfs"
+    # BUILD_DIRECTORY="$PROJECT_DIRECTORY/build"
+    # NUMBER_OF_PROCESSORS="$(nproc)"
+    # NUMBER_OF_PROCESSORS="$(($NUMBER_OF_PROCESSORS-1))" 
+
+    sh "$SCRIPT_DIRECTORY/_update_local_dconf_database_user.sh"
+}
+
+package() {
+    PROJECT_DIRECTORY="$(dirname -- "$(dirname -- "$(dirname -- "$(pwd)")")")"
+    SCRIPT_DIRECTORY="$PROJECT_DIRECTORY/scripts"
+    SOURCE_DIRECTORY="$PROJECT_DIRECTORY/src"
+    RESOURCE_DIRECTORY="$SOURCE_DIRECTORY/rootfs"
+    # BUILD_DIRECTORY="$PROJECT_DIRECTORY/build"
+    # NUMBER_OF_PROCESSORS="$(nproc)"
+    # NUMBER_OF_PROCESSORS="$(($NUMBER_OF_PROCESSORS-1))"   
+
+    # To bypass makepkg's dependency check during build-time
+    depends+=('ukui-themes' 'fluent-gtk-theme' 'mate-settings-daemon')
+
+    install -D -m644 "${RESOURCE_DIRECTORY}/etc/skel/.config/dconf/user" "${pkgdir}/etc/skel/.config/dconf/user"
+    install -D -m644 "${RESOURCE_DIRECTORY}/usr/share/backgrounds/calla-alt.png" "${pkgdir}/usr/share/backgrounds/calla-alt.png"
+    install -D -m644 "${RESOURCE_DIRECTORY}/etc/xdg/autostart/mate-settings-daemon-ukui.desktop" "${pkgdir}/etc/xdg/autostart/mate-settings-daemon-ukui.desktop" # Required to apply the MATE theme. Also otherwise did not autostart in UKUI because of the OnlyShowIn setting in the .desktop file
+}

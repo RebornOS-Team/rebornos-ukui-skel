@@ -1,0 +1,12 @@
+#! /usr/bin/env sh
+
+SCRIPT_DIRECTORY="$(dirname -- "$(readlink -f -- "$0")")"
+PROJECT_DIRECTORY="$(dirname -- "$SCRIPT_DIRECTORY")"
+SOURCE_DIRECTORY="$PROJECT_DIRECTORY/src"
+RESOURCE_DIRECTORY="$SOURCE_DIRECTORY/rootfs"
+
+KEYFILE_DIRECTORY="$SOURCE_DIRECTORY/keyfiles"
+OUTPUT_DIRECTORY="$RESOURCE_DIRECTORY/etc/skel/.config/dconf"
+
+mkdir -p "$OUTPUT_DIRECTORY"
+dconf compile "$OUTPUT_DIRECTORY/user" "$KEYFILE_DIRECTORY"
